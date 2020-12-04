@@ -1,0 +1,43 @@
+<% content_for :title, "Edit Meter" %>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Edit Meter</h1>
+</div>
+
+
+<%= form_for @meter do |f| %>
+  
+  <div class="form-group row">
+    <%= f.label :name %>
+    <%= f.text_field :name, autofocus: true, autocomplete: "Meter Name", class: 'form-control' %>
+  </div>
+
+  <div class="form-group row">
+    <%= f.label :number %>
+    <%= f.number_field :number, autofocus: true, autocomplete: "Meter Number", class: 'form-control' %>
+  </div>
+
+  <div class="form-group row">
+    <%= f.label :nlc %>
+    <%= f.text_field :nlc, autofocus: true, autocomplete: "Meter NLC", class: 'form-control' %>
+  </div>
+
+  <div class="form-group row">
+    <%= f.label :kt %>
+    <%= f.number_field :kt, autofocus: true, autocomplete: "Transformation Coefficient", class: 'form-control' %>
+  </div>
+
+   <div class="form-group">
+      <%= f.label :operator_id %>
+      <%= f.select :operator_id, Operator.all.collect {|x| [x.name, x.id]}, {:include_blank => "Select Operator"}, class: "form-control" %>
+    </div>
+    
+    <div class="form-group">
+      <%= f.label :company_id %>
+      <%= f.select :company_id, Company.all.collect {|x| [x.name, x.id]}, {:include_blank => "Select Company"}, class: "form-control" %>
+    </div>
+
+
+  <%= f.submit "Submit", class: 'btn btn-success' %>
+  <%= link_to "Cancel", meters_path, class: 'btn btn-secondary' %>
+
+<% end %>

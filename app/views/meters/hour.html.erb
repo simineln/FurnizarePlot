@@ -1,0 +1,112 @@
+<% content_for :title, "Meter | " + @meter.nlc %>
+
+<br>
+<div class="row">
+  <div class="col-md-12 table-responsive">
+
+    <h4><%= @meter.company.name %></h4>
+    <h6>NLC Number - <%= @meter.nlc %></h6>
+    <h6>Meter number - <%= @meter.number %></h6>
+    <h6>Kt - <%= @meter.kt %></h6>
+    <div class="border-bottom"></div>
+    <br>
+
+
+
+<div class="row">
+  <div class="col-auto">
+    <%= link_to "1H", hour_meter_path(@meter), :class => "btn btn-outline-primary btn-sm #{"active" if  "hour"}", :role => "button" %>
+    <%= link_to "1D", day_meter_path(@meter), :class => "btn btn-outline-primary btn-sm #{"active" if  "day"}", :role => "button" %>
+  </div>
+  
+  <div class="col-auto">
+
+    <div class="form-inline">
+      <%= form_tag hour_meter_path, method: :get do %>
+        <%= text_field_tag 'daterange', params[:daterange], placeholder: 'Enter the Date', class: 'flatpickr' %>
+        <%= submit_tag 'Select', name: :datepicker, class: 'btn-primary btn-sm' %>
+      <% end %>
+    </div>
+
+  </div>
+
+  <div class="col-auto float-right">
+    <div class="btn-group">
+      <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export
+      </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="#xls">XLS</a>
+        <a class="dropdown-item" href="#xml">XML</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <br><br>
+
+
+    <div class="row">
+      <div class="col-md-6">
+        <h6><strong>AEC+</strong></h6>
+        <%= line_chart @readings.group(:date).sum(:aec_p) %>
+      </div>
+      <div class="col-md-6">
+        <h6><strong>AEC-</strong></h6>
+        <%= line_chart @readings.group(:date).sum(:aec_m) %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <h6><strong>REC+</strong></h6>
+        <%= line_chart @readings.group(:date).sum(:rec_p) %>
+      </div>
+      <div class="col-md-6">
+        <h6><strong>REC-</strong></h6>
+        <%= line_chart @readings.group(:date).sum(:rec_m) %>
+      </div>
+    </div>
+
+
+    <br><br>
+
+    <table class="table table-striped table-sm" style="font-size: 13px; margin-left: 15px">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">AEC+, kWh</th>
+          <th scope="col">AEC-, kWh</th>
+          <th scope="col">REC+, kWh</th>
+          <th scope="col">REC-, kWh</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="font-weight: bold;">
+          <td>Total</td>
+          <td><%= @readings.sum(:aec_p).round(4) %></td>
+          <td><%= @readings.sum(:aec_m).round(4) %></td>
+          <td><%= @readings.sum(:rec_p).round(4) %></td>
+          <td><%= @readings.sum(:rec_m).round(4) %></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <% @readings.each do |reading| %>
+          <tr>
+            <td><%= reading.date %></td>
+            <td><%= reading.aec_p %></td>
+            <td><%= reading.aec_m %></td>
+            <td><%= reading.rec_p %></td>
+            <td><%= reading.rec_m %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

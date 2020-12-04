@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= yield(:title) %></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_pack_tag 'application', media: 'all' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= favicon_link_tag asset_path('fav.png') %>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" title="Furnizare Energie" href=""><img src="../../../assets/logo.png" width="125" alt="Furnizare Energie" class="center"></a>
+
+      <!-- Alerts & Notifications -->
+      <div class='w-100'>
+        <% if flash[:notice] %>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <%= flash[:notice] %> 
+          </div>
+        <% end %>
+
+        <% if flash[:alert] %>
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            <%= flash[:alert] %>
+          </div>
+        <% end %>
+      </div>
+
+
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar bg-light collapse">
+          <div class="sidebar-sticky pt-3">
+            <ul class="nav flex-column">
+
+              <li class="nav-item">
+                <%= link_to image_tag('activity.svg', class: 'menu_icon') + "Meters", meters_path, class: "nav-link #{'link-active' if params[:controller] == 'meters'}" %>
+              </li>
+
+              <!-- Points tab -->
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="points-tab" data-toggle="tab" href="#points" role="tab" aria-controls="points" aria-selected="true">Points</a>
+                </li>
+              <!-- Companies tab -->
+                <li class="nav-item">
+                  <a class="nav-link" id="companies-tab" data-toggle="tab" href="#companies" role="tab" aria-controls="companies" aria-selected="false">Companies</a>
+                </li>
+              </ul>
+
+              <div class="tab-content" id="myTabContent">
+                <!-- Points tab data -->
+                <div class="tab-pane fade show active" id="points" role="tabpanel" aria-labelledby="point-tab">
+
+                  <% @operators_nav.each do |operator| %>
+                    <li class="link"><%= image_tag('server', class: 'menu_icon') + operator.name %></li>
+                    <ul class="nested" style="list-style: outside none none;">
+                      <% @companies_nav.each do |company| %>
+                        <li class="link"><%= company.name %></li>
+                          <ul class="nested" style="list-style: outside none none;">
+                          <% meters = Meter.where(company_id: company.id) %>
+                            <% meters.each do |meter| %>
+                              <li class="nav-item">
+                                <%= link_to image_tag('git-commit.svg', class: 'menu_icon') + meter.nlc, day_meter_path(meter), class: "link-nested #{'link-active' if meter.number == @meter_num.to_i}" %> 
+                              </li>
+                            <% end %>
+                          </ul>
+                      <% end %>
+                    </ul>
+                  <% end %>
+                </div>
+
+                <!-- Companies tab data -->
+                <div class="tab-pane fade" id="companies" role="tabpanel" aria-labelledby="companies-tab">
+                  <%= @companies_nav.each do |company| %>
+                    <li class="link">
+                      <%= link_to image_tag('cpu.svg', class: 'menu_icon') + company.name, day_company_path(company) %>
+                    </li>
+                  <% end %>
+                </div>
+
+              </div>
+            </ul>
+
+        </div>
+      </div>
+
+
+
+        <div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+
+
+  </body>
+</html>
