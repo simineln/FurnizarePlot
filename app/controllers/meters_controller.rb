@@ -42,21 +42,6 @@ class MetersController < ApplicationController
     redirect_to meters_path
   end
 
-  def day
-    @meter = Meter.find(params[:id])
-
-    if params[:datepicker]
-      daterange = params[:daterange].split("to")
-      @readings_plot = Reading.where(meter_id: @meter.id).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
-      @readings = Reading.where(meter_id: @meter.id).where(date: daterange[0].to_date..daterange[-1].to_date + 1).group_by_day(:date)
-
-    else
-      @readings_plot = Reading.where(meter_id: @meter.id)
-      @readings = Reading.where(meter_id: @meter.id).group_by_day(:date)
-
-    end
-  end
-
   def hour
     @meter = Meter.find(params[:id])
 
@@ -66,9 +51,72 @@ class MetersController < ApplicationController
     else
       @readings = Reading.where(meter_id: @meter.id)
     end
+
+    @aec_sum = [@readings.sum(:aec_p), @readings.sum(:aec_m)]
+    @rec_sum = [@readings.sum(:rec_p), @readings.sum(:rec_m)]
+    if @meter.inverted
+      @aec_sum[0], @aec_sum[1] = @aec_sum[1], @aec_sum[0]
+      @rec_sum[0], @rec_sum[1] = @rec_sum[1], @rec_sum[0]
+    end
+
+
+  end
+
+  def day
+    @meter = Meter.find(params[:id])
+
+    if params[:datepicker]
+      daterange = params[:daterange].split("to")
+      @readings = Reading.where(meter_id: @meter.id).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
+    else
+      @readings = Reading.where(meter_id: @meter.id)
+    end
+    
+    @readingsDay = @readings.group_by_day(:date)
+
+    @aec_sum = [@readings.sum(:aec_p), @readings.sum(:aec_m)]
+    @rec_sum = [@readings.sum(:rec_p), @readings.sum(:rec_m)]
+
+    # Generating hashes for sum values
+    @aec = [@readingsDay.sum(:aec_p), @readingsDay.sum(:aec_m)]
+    @rec = [@readingsDay.sum(:rec_p), @readingsDay.sum(:rec_m)]
+    
+    if @meter.inverted
+      @aec[0], @aec[1] = @aec[1], @aec[0]
+      @rec[0], @rec[1] = @rec[1], @rec[0]
+      @aec_sum[0], @aec_sum[1] = @aec_sum[1], @aec_sum[0]
+      @rec_sum[0], @rec_sum[1] = @rec_sum[1], @rec_sum[0]
+    end
+  end
+
+  def month
+   @meter = Meter.find(params[:id])
+
+    if params[:datepicker]
+      daterange = params[:daterange].split("to")
+      @readings = Reading.where(meter_id: @meter.id).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
+    else
+      @readings = Reading.where(meter_id: @meter.id)
+    end
+    
+    @readingsMonth = @readings.group_by_month(:date)
+
+    @aec_sum = [@readings.sum(:aec_p), @readings.sum(:aec_m)]
+    @rec_sum = [@readings.sum(:rec_p), @readings.sum(:rec_m)]
+
+    # Generating hashes for sum values
+    @aec = [@readingsMonth.sum(:aec_p), @readingsMonth.sum(:aec_m)]
+    @rec = [@readingsMonth.sum(:rec_p), @readingsMonth.sum(:rec_m)]
+    
+    if @meter.inverted
+      @aec[0], @aec[1] = @aec[1], @aec[0]
+      @rec[0], @rec[1] = @rec[1], @rec[0]
+      @aec_sum[0], @aec_sum[1] = @aec_sum[1], @aec_sum[0]
+      @rec_sum[0], @rec_sum[1] = @rec_sum[1], @rec_sum[0]
+    end
   end
 
   private def meter_params
-    params.require(:meter).permit(:name, :number, :nlc, :kt, :operator_id, :company_id)
+    params.require(:meter).permit(:name, :number, :nlc, :kt, :operator_id, :company_id, :inverted)
   end
 end

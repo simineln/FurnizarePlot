@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_30_082440) do
+ActiveRecord::Schema.define(version: 2020_12_07_221745) do
 
   create_table "companies", force: :cascade do |t|
     t.string "name"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 2020_11_30_082440) do
     t.integer "company_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "inverted"
   end
 
   create_table "operators", force: :cascade do |t|

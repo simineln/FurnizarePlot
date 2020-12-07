@@ -15,10 +15,11 @@
 
 <div class="row">
   <div class="col-auto">
-    <%= link_to "1H", hour_meter_path(@meter), :class => "btn btn-outline-primary btn-sm #{"active" if  "hour"}", :role => "button" %>
-    <%= link_to "1D", day_meter_path(@meter), :class => "btn btn-outline-primary btn-sm #{"active" if  "day"}", :role => "button" %>
+    <%= link_to "1H", hour_meter_path(@meter), :class => "btn btn-outline-primary btn-sm #{"active" if request.original_url.include? "hour"}", :role => "button" %>
+    <%= link_to "1D", day_meter_path(@meter), :class => "btn btn-outline-primary btn-sm #{"active" if request.original_url.include? "day"}", :role => "button" %>
+    <%= link_to "1M", month_meter_path(@meter), :class => "btn btn-outline-primary btn-sm #{"active" if request.original_url.include? "month"}", :role => "button" %>
   </div>
-  
+
   <div class="col-auto">
 
     <div class="form-inline">
@@ -34,7 +35,7 @@
     <div class="btn-group">
       <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export
       </button>
-    <div class="dropdown-menu">
+      <div class="dropdown-menu">
         <a class="dropdown-item" href="#xls">XLS</a>
         <a class="dropdown-item" href="#xml">XML</a>
       </div>
@@ -43,29 +44,28 @@
 </div>
 
 
-
     <br><br>
 
 
     <div class="row">
       <div class="col-md-6">
         <h6><strong>AEC+</strong></h6>
-        <%= line_chart @readings.group(:date).sum(:aec_p) %>
+        <%= line_chart @readings.group(:date).sum(@meter.inverted ? :aec_m : :aec_p) %>
       </div>
       <div class="col-md-6">
         <h6><strong>AEC-</strong></h6>
-        <%= line_chart @readings.group(:date).sum(:aec_m) %>
+        <%= line_chart @readings.group(:date).sum(@meter.inverted ? :aec_p : :aec_m) %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-6">
         <h6><strong>REC+</strong></h6>
-        <%= line_chart @readings.group(:date).sum(:rec_p) %>
+        <%= line_chart @readings.group(:date).sum(@meter.inverted ? :rec_m : :rec_p) %>
       </div>
       <div class="col-md-6">
         <h6><strong>REC-</strong></h6>
-        <%= line_chart @readings.group(:date).sum(:rec_m) %>
+        <%= line_chart @readings.group(:date).sum(@meter.inverted ? :rec_p : :rec_m) %>
       </div>
     </div>
 
@@ -85,10 +85,10 @@
       <tbody>
         <tr style="font-weight: bold;">
           <td>Total</td>
-          <td><%= @readings.sum(:aec_p).round(4) %></td>
-          <td><%= @readings.sum(:aec_m).round(4) %></td>
-          <td><%= @readings.sum(:rec_p).round(4) %></td>
-          <td><%= @readings.sum(:rec_m).round(4) %></td>
+          <td><%= @aec_sum[0].round(4) %></td>
+          <td><%= @aec_sum[1].round(4) %></td>
+          <td><%= @rec_sum[0].round(4) %></td>
+          <td><%= @rec_sum[1].round(4) %></td>
         </tr>
         <tr>
           <td></td>
@@ -100,10 +100,10 @@
         <% @readings.each do |reading| %>
           <tr>
             <td><%= reading.date %></td>
-            <td><%= reading.aec_p %></td>
-            <td><%= reading.aec_m %></td>
-            <td><%= reading.rec_p %></td>
-            <td><%= reading.rec_m %></td>
+            <td><%= @meter.inverted ? reading.aec_m : reading.aec_p %></td>
+            <td><%= @meter.inverted ? reading.aec_p : reading.aec_m %></td>
+            <td><%= @meter.inverted ? reading.rec_m : reading.rec_p %></td>
+            <td><%= @meter.inverted ? reading.rec_p : reading.rec_m %></td>
           </tr>
         <% end %>
       </tbody>

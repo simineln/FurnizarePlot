@@ -36,6 +36,13 @@
     <%= f.select :company_id, Company.all.collect {|x| [x.name, x.id]}, {:include_blank => "Select Company"}, class: "form-control" %>
   </div>
 
+  <div class="form-check">
+    <%= f.label :inverted %>
+    <%= f.check_box :inverted %>
+  </div>
+
+  <br>
+
   <%= f.submit "Submit", class: 'btn btn-success' %>
   <%= link_to "Cancel", meters_path, class: 'btn btn-secondary' %>
 

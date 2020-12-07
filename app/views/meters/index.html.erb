@@ -34,8 +34,8 @@
           <td><%= meter.company.name %></td>
           <td><%= meter.operator.name %></td>
           <td><%= meter.kt %></td>
-          <td></td>
-          <td>
+          <td><%= meter.inverted ? check_box_tag(meter.inverted, value=1, checked=true, disabled: true) : check_box_tag(meter.inverted, value=0, checked=false, disabled: true) %></td>
+          <td style="text-align: right;">
             <%= link_to "Edit", edit_meter_path(meter), :class => "btn btn-outline-warning btn-xs", :role => "button" %>
             <%= link_to "Delete", meter_path(meter), :class => "btn btn-danger btn-xs", :role => "button", method: :delete, data: {confirm: "Are you sure?"} %>
           </td>
@@ -43,7 +43,6 @@
       <% end %>
     </tbody>
   </table>
-
 
   <!-- Companies -->
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
@@ -67,7 +66,7 @@
           <td><%= company.name %></td>
           <td><%= company.address %></td>
           <td><%= company.description %></td>
-          <td>
+          <td style="text-align: right;">
             <%= link_to "Edit", edit_company_path(company), :class => "btn btn-outline-warning btn-xs", :role => "button" %>
             <%= link_to "Delete", company_path(company), :class => "btn btn-danger btn-xs", :role => "button", method: :delete, data: {confirm: "Are you sure?"} %>
             </td>
@@ -97,7 +96,7 @@
           <td scope="row"><%= index + 1 %></td>
           <td><%= operator.name %></td>
           <td><%= operator.description %></td>
-          <td>
+          <td style="text-align: right;">
             <%= link_to "Edit", edit_operator_path(operator), :class => "btn btn-outline-warning btn-xs", :role => "button" %>
             <%= link_to "Delete", operator_path(operator), :class => "btn btn-danger btn-xs", :role => "button", method: :delete, data: {confirm: "Are you sure?"} %>
             </td>

@@ -44,32 +44,47 @@ class CompaniesController < ApplicationController
   def hour
     @company = Company.find(params[:id])
     @meters = Meter.where(company_id: @company.id)
+    metersID = @meters.distinct.pluck(:id)  # array with meters IDs
 
     if params[:datepicker]
       daterange = params[:daterange].split("to")
-      @readings = Reading.where(meter_id: @meters[0].id).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
+      @readings = Reading.where(meter_id: metersID).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
     else
-      @readings = Reading.where(meter_id: @meters[0].id)
+      @readings = Reading.where(meter_id: metersID)
     end
-
   end
 
   def day
     @company = Company.find(params[:id])
     @meters = Meter.where(company_id: @company.id)
+    metersID = @meters.distinct.pluck(:id)  # array with meters IDs
 
     if params[:datepicker]
       daterange = params[:daterange].split("to")
-      @readings_plot = Reading.where(meter_id: @meters[0].id).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
-      @readings = Reading.where(meter_id: @meters[0].id).where(date: daterange[0].to_date..daterange[-1].to_date + 1).group_by_day(:date)
+      @readings = Reading.where(meter_id: metersID).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
 
+      # Generating hashes for sum values and plots
+      @readingsDay = @readings.group_by_day(:date)
+      @aec_p = @readingsDay.sum(:aec_p)
+      @aec_m = @readingsDay.sum(:aec_m)
+      @rec_p = @readingsDay.sum(:rec_p)
+      @rec_m = @readingsDay.sum(:rec_m)
     else
-      @readings_plot = Reading.where(meter_id: @meters[0].id)
-      @readings = Reading.where(meter_id: @meters[0].id).group_by_day(:date)
+      @readings = Reading.where(meter_id: metersID)
 
+      # Generating hashes for sum values and plots
+      @readingsDay = @readings.group_by_day(:date)
+      @aec_p = @readingsDay.sum(:aec_p)
+      @aec_m = @readingsDay.sum(:aec_m)
+      @rec_p = @readingsDay.sum(:rec_p)
+      @rec_m = @readingsDay.sum(:rec_m)
     end
+  end
+
+  def month
 
   end
+
 
   private def company_params
     params.require(:company).permit(:name, :address, :description)

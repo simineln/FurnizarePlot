@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     member do
       get 'day'
       get 'hour'
+      get 'month'
     end
   end
 
@@ -12,6 +13,7 @@ Rails.application.routes.draw do
     member do
       get 'day'
       get 'hour'
+      get 'month'
     end
   end
 

@@ -45,7 +45,12 @@
             <ul class="nav flex-column">
 
               <li class="nav-item">
+
+                <% if false %>
                 <%= link_to image_tag('activity.svg', class: 'menu_icon') + "Meters", meters_path, class: "nav-link #{'link-active' if params[:controller] == 'meters'}" %>
+
+                <% end %>
+                <%= link_to image_tag('activity.svg', class: 'menu_icon') + "Meters", meters_path, class: "nav-link" %>
               </li>
 
               <!-- Points tab -->
@@ -72,7 +77,7 @@
                           <% meters = Meter.where(company_id: company.id) %>
                             <% meters.each do |meter| %>
                               <li class="nav-item">
-                                <%= link_to image_tag('git-commit.svg', class: 'menu_icon') + meter.nlc, day_meter_path(meter), class: "link-nested #{'link-active' if meter.number == @meter_num.to_i}" %> 
+                                <%= link_to image_tag('git-commit.svg', class: 'menu_icon') + meter.nlc, day_meter_path(meter), class: "link-nested #{'link-active' if meter.id == params[:id].to_i}" %> 
                               </li>
                             <% end %>
                           </ul>
