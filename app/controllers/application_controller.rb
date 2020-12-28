@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   before_action :nav, :meter_init
 
   def nav
+    @ids = []
     @operators_nav = Operator.all
     meters_id = Meter.distinct.pluck(:company_id)
     @companies_nav = Company.where(id: meters_id)

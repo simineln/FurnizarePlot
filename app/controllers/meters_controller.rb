@@ -6,6 +6,77 @@ class MetersController < ApplicationController
     @meters = Meter.all
   end
 
+  def show
+
+    if params[:ids]
+      @ids = params[:ids]
+      @scale = params[:id]
+      metersID = params[:ids].map(&:to_i)
+      @meters = Meter.where(id: metersID)
+
+      case @scale
+        when "hour"
+
+          if params[:datepicker]
+            daterange = params[:daterange].split("to")
+            @readings = Reading.where(meter_id: metersID).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
+          else
+            @readings = Reading.where(meter_id: metersID)
+          end
+
+        when "day"
+
+          if params[:datepicker]
+            daterange = params[:daterange].split("to")
+            @readings = Reading.where(meter_id: metersID).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
+
+            # Generating hashes for sum values and plots
+            @readingsDay = @readings.group_by_day(:date)
+            @aec_p = @readingsDay.sum(:aec_p)
+            @aec_m = @readingsDay.sum(:aec_m)
+            @rec_p = @readingsDay.sum(:rec_p)
+            @rec_m = @readingsDay.sum(:rec_m)
+          else
+            @readings = Reading.where(meter_id: metersID)
+
+            # Generating hashes for sum values and plots
+            @readingsDay = @readings.group_by_day(:date)
+            @aec_p = @readingsDay.sum(:aec_p)
+            @aec_m = @readingsDay.sum(:aec_m)
+            @rec_p = @readingsDay.sum(:rec_p)
+            @rec_m = @readingsDay.sum(:rec_m)
+          end
+
+        when "month"
+
+          if params[:datepicker]
+            daterange = params[:daterange].split("to")
+            @readings = Reading.where(meter_id: metersID).where(date: daterange[0].to_date..daterange[-1].to_date + 1)
+
+            # Generating hashes for sum values and plots
+            @readingsMonth = @readings.group_by_month(:date)
+            @aec_p = @readingsMonth.sum(:aec_p)
+            @aec_m = @readingsMonth.sum(:aec_m)
+            @rec_p = @readingsMonth.sum(:rec_p)
+            @rec_m = @readingsMonth.sum(:rec_m)
+          else
+            @readings = Reading.where(meter_id: metersID)
+
+            # Generating hashes for sum values and plots
+            @readingsMonth = @readings.group_by_month(:date)
+            @aec_p = @readingsMonth.sum(:aec_p)
+            @aec_m = @readingsMonth.sum(:aec_m)
+            @rec_p = @readingsMonth.sum(:rec_p)
+            @rec_m = @readingsMonth.sum(:rec_m)
+          end
+      end
+
+
+
+    end 
+
+  end
+
   def new
     @page_title = 'Add New Meter'
     @meter = Meter.new
@@ -58,7 +129,6 @@ class MetersController < ApplicationController
       @aec_sum[0], @aec_sum[1] = @aec_sum[1], @aec_sum[0]
       @rec_sum[0], @rec_sum[1] = @rec_sum[1], @rec_sum[0]
     end
-
 
   end
 
